@@ -20,7 +20,10 @@ while (Run)
     Console.WriteLine("2. Add a new asset ");
     Console.WriteLine("3. Edit an asset ");
     Console.WriteLine("4. Delete an asset ");
-    Console.WriteLine("5. Show assets orded by type and purchase date");
+    //Level 2 Orded by type and dffice
+    //Console.WriteLine("5. Show assets orded by type and purchase date");
+    //Level 3 orded by Office and date
+    Console.WriteLine("5. Show assets orded by office and purchase date");
     Console.WriteLine("6. Exit application ");
 
 
@@ -35,8 +38,7 @@ while (Run)
     {
         List<Asset> Assets = Context.Assets.ToList();
 
-        Console.WriteLine("Here's all the assets - laptops and phones - in the database");
-        Console.WriteLine("Shows: TYPE - BRAND - MODEL - PURCHASE DATE - OFFICE - PRICE EUR - CURRENCY - TODAY'S EXCHANGE RATE");
+        Console.WriteLine("Here are all the assets - laptops and phones - in the database: ");
         Console.WriteLine();
         foreach (Asset Asset in Assets)
         {
@@ -46,7 +48,8 @@ while (Run)
         }
 
         Console.WriteLine();
-
+        Console.WriteLine("Shows: TYPE, BRAND, MODEL, PURCHASE DATE, OFFICE, PRICE EUR, CURRENCY, EXCHANGE RATE");
+        Console.WriteLine();
         Console.WriteLine();
 
     }
@@ -186,7 +189,7 @@ while (Run)
             Console.WriteLine();
         }
 
-        Console.Write("Choose an asset number to delete: ");
+        Console.Write("Choose a number to delete: ");
         string DeleteAsset = Console.ReadLine();
         Asset AssetToDelete = Context.Assets.FirstOrDefault(x => x.Id == Convert.ToInt32(DeleteAsset));
 
@@ -200,7 +203,10 @@ while (Run)
 
     else if (UserChoice == "5")
     {
-        Console.WriteLine("Here's the assets sorted by type (laptop first, then phones) and then by purchase date");
+        //Level 2 sorted by type and date
+        //Console.WriteLine("Here's the assets sorted by type (laptops first, then phones) and then by purchase date");
+        //Level 3 sorted by office and date
+        Console.WriteLine("Here are the assets sorted by office and then by purchase date");
 
         Console.WriteLine();
         //List<Asset> Assets = Context.Assets.ToList();
@@ -208,17 +214,40 @@ while (Run)
         var Assets = Context.Assets.ToList();
 
 
-        List<Asset> SortedAssetsByTypeAndPurchaseDate(List<Asset> SortedAssets)
-        {
+        //Assets sorted by Type and PurchaseDate Level 2
+        //List<Asset> SortedAssetsByTypeAndPurchaseDate(List<Asset> SortedAssets)
 
-            SortedAssets = Assets.OrderBy(Asset => Asset.GetType().Name).ThenBy(Asset => Asset.Type).ThenBy(Asset => Asset.PurchaseDate).ToList();
+            //Assets sorted by Office and PurchaseDate Level 3
+          List<Asset> SortedAssetsByOfficeAndPurchaseDate(List<Asset> SortedAssets)
+        {
+            //Level 2 sorted by Type and Date
+           // SortedAssets = Assets.OrderBy(Asset => Asset.GetType().Name).ThenBy(Asset => Asset.Type).ThenBy(Asset => Asset.PurchaseDate).ToList();
+            
+            //Level 3 sorted by Office and Date
+            SortedAssets = Assets.OrderBy(Asset => Asset.GetType().Name).ThenBy(Asset => Asset.Office).ThenBy(Asset => Asset.PurchaseDate).ToList();
 
             return SortedAssets;
         }
 
-        List<Asset> SortedAssets = SortedAssetsByTypeAndPurchaseDate(Assets);
+        //Assets sorted by Type and PurchaseDate Level 2
+        //List<Asset> SortedAssets = SortedAssetsByTypeAndPurchaseDate(Assets);
 
+        //Assets sorted by Office and PurchaseDate Level 3
+        List<Asset> SortedAssets = SortedAssetsByOfficeAndPurchaseDate(Assets);
 
+        //Calculate exchange rates
+    //    List<ExchangeRate> ExchangeRates = CalulateExchangeRates();
+
+    //    List<ExchangeRate> CalulateExchangeRates()
+    //    {
+    //        return new List<//ExchangeRate>()
+    //{
+    //    new ExchangeRate("EUR",1.00),
+    //    new ExchangeRate("SEK", 0.09),
+    //    new ExchangeRate("GBP", 1.15)
+    //};
+
+    //    }
 
         //CALCULATE TIME DIFF 
 
@@ -229,12 +258,20 @@ while (Run)
         //int daysWarning = 913; //Approx 30 months - yellow
         //int daysAlarm = 1004;  //Approx 33 months - red
 
-        // LOOPA IGENOM OCH SE OM DATUM ÄR VARNING ELLER ALARM + sortera på type and PurchaseDate
+        // LOOPA IGENOM OCH SE OM DATUM ÄR VARNING ELLER ALARM + sortera på office and PurchaseDate
         foreach (var Asset in SortedAssets)
            {
 
             TimeSpan diff = DateTime.Now - Asset.PurchaseDate;//Calculate time span between today and purchase date
             DecideForegroundColor(daysWarning, daysAlarm, diff);
+
+        //    double EurRateToday = ExchangeRates
+        //.Where(ExchangeRate => ExchangeRate.Currency == Asset.Currency)
+        //.Select(ex => ex.Rate)
+        //.FirstOrDefault();
+        //    //XXXX(Asset, eurRateToday);
+
+            Console.ForegroundColor = ConsoleColor.White;
 
             Console.WriteLine(Asset.Type.PadRight(15) + Asset.Brand.PadRight(15) + Asset.Model.PadRight(15) + Asset.PurchaseDate.ToString("yyyy-MM-dd").PadRight(15) + Asset.Office.PadRight(15) + Asset.Price.ToString().PadRight(10) + Asset.Currency.PadRight(10) + Asset.ExchangeRate);
 
@@ -258,7 +295,7 @@ while (Run)
 }
 
 
-
+//Deciding colors after purchase dates, connected to foreach method (in number 5)
 
 static void DecideForegroundColor(int daysWarning, int daysAlarm, TimeSpan diff)
 {
